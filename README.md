@@ -9,10 +9,12 @@ Install the sbt build tool for Scala as described in the [reference manual](http
 Then run the following from your shell:
 
 ```
-sbt ~re-start
+sbt run
 ```
 
-This will start the project on http://localhost:8080/ and restart it anytime you change and save the code.
+This will start the project on http://localhost:8080/ 
+
+First time you run it, libraries will be downloaded.
 
 ## Example API calls
 
@@ -26,9 +28,16 @@ These examples use [HTTPie][httpie]:
 
 * Update a customer: `http PATCH :8080/customers/2 phone="+44 555 555" name="Robert"`
 
+# Code
+
+- `api.scala` defines the REST endpoints.
+- `database.scala` defines all the queries and establishes an in-memory database.
+- `model.scala` gives the data model.
+- `main.scala` pulls everything together into a web server.
+
 ## Credit
 
-This is in part a mashup of parts from [Typelevel todomvc][tltodo], [http4s todomvc][htodo], and includes [Bulletin]
+This is in part a mash-up of parts from [Typelevel todomvc][tltodo], [http4s todomvc][htodo], and [Bulletin]
 
 [Bulletin]:  https://github.com/davegurnell/bulletin
 [tltodo]:  https://github.com/davegurnell/typelevel-todomvc

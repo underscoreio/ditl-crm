@@ -28,8 +28,6 @@ class CustomerAPI(db: Database) {
     case req @ POST -> Root / "customers" =>
       req.decode[Customer] { c => Ok(db.insert(c)) }
 
-    case GET -> Root / "audits" => Ok(db.audits)
-
     case req @ PATCH -> Root / "customers" / IntVar(id) =>
       req.decode[CustomerPatch] { patch =>
         db.find(id).flatMap {

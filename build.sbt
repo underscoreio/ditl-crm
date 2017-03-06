@@ -20,8 +20,7 @@ scalacOptions ++= Seq(
   "-Xfuture"
 )
 
-
-libraryDependencies ++= webserver ++ json ++ database ++ logging ++ scalatest ++ shapeless
+libraryDependencies ++= webserver ++ json ++ database ++ logging ++ scalatest ++ merge
 
 resolvers += Resolver.sonatypeRepo("snapshots")
 val http4sVersion = "0.16.0-cats-SNAPSHOT"
@@ -49,6 +48,10 @@ lazy val logging = Seq(
 
 lazy val scalatest = Seq(
   "org.scalatest" %% "scalatest" % "3.0.1" % Test
+)
+
+lazy val merge = Seq(
+  "com.davegurnell" %% "bulletin" % "0.7.0"
 )
 
 lazy val shapeless = Seq(

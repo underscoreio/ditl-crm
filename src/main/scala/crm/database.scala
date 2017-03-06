@@ -11,7 +11,6 @@ trait Database {
   def insert(c: Customer): Task[Customer]
   def find(id: Int): Task[Option[Customer]]
   def update(c: Customer): Task[Customer]
-  def audits: Task[Seq[String]]
 }
 
 object DoobieDatabase {
@@ -31,18 +30,15 @@ class DoobieDatabase(xa: Transactor[Task]) extends Database {
   val init: Task[Unit] = {
     val action = for {
       _ <- createCustomerTable
-      _ <- createAuditTable
       _ <- insertQuery(Customer("Alice", "+1 555 1234"))
-      _ <- insertQuery(Customer("Bob", "+1 555 5678"))
+      _ <- insertQuery(Customer("Bob",   "+1 555 5678"))
     } yield ()
     action.transact(xa)
   }
 
   def list: Task[List[Customer]] = listQuery.transact(xa)
 
-  def audits: Task[List[String]] = sql"select message from audit".query[String].list.transact(xa)
-
-  def insert(c: Customer): Task[Customer] = (audit(s"Adding customer ${c.name}") *> insertQuery(c)).transact(xa)
+  def insert(c: Customer): Task[Customer] = insertQuery(c).transact(xa)
   
   def update(c: Customer): Task[Customer] = updateQuery(c).transact(xa)
 
@@ -51,11 +47,6 @@ class DoobieDatabase(xa: Transactor[Task]) extends Database {
   lazy val createCustomerTable: ConnectionIO[Int] =
     sql"""
     create table customer(name varchar not null, phone varchar not null, id serial primary key)
-    """.update.run
-
-  lazy val createAuditTable: ConnectionIO[Int] =
-    sql"""
-    create table audit(message varchar not null, id serial primary key)
     """.update.run
 
   lazy val listQuery: ConnectionIO[List[Customer]] =
@@ -67,9 +58,6 @@ class DoobieDatabase(xa: Transactor[Task]) extends Database {
   def insertQuery(cust: Customer): ConnectionIO[Customer] = for {
     id <- sql""" insert into customer (name, phone) values (${cust.name}, ${cust.phone}) """.update.withUniqueGeneratedKeys[Int]("id")
   } yield cust.copy(id = Some(id))
-
-  def audit(msg: String): ConnectionIO[Int] =
-    sql""" insert into audit (message) values ($msg) """.update.run
 
   def updateQuery(cust: Customer): ConnectionIO[Customer] = for {
     rowsAffected <- sql""" update customer set name=${cust.name}, phone=${cust.phone} where id=${cust.id} """.update.run
