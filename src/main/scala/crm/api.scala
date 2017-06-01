@@ -10,9 +10,11 @@ import io.circe.generic.auto._
 import org.http4s.circe._
 
 class CustomerAPI(db: Database) {
-
-   implicit def circeJsonDecoder[A](implicit decoder: Decoder[A]) = jsonOf[A]
-   implicit def circeJsonEncoder[A](implicit encoder: Encoder[A]) = jsonEncoderOf[A]
+ 
+  // Typeclass instances to convert between htt4s response/request decoded
+  // and the Circe JSON encoder/decoder.
+  implicit def circeJsonDecoder[A](implicit decoder: Decoder[A]) = jsonOf[A]
+  implicit def circeJsonEncoder[A](implicit encoder: Encoder[A]) = jsonEncoderOf[A]
 
   val service = HttpService {
 

@@ -23,7 +23,7 @@ scalacOptions ++= Seq(
 libraryDependencies ++= webserver ++ json ++ database ++ logging ++ scalatest ++ merge
 
 resolvers += Resolver.sonatypeRepo("snapshots")
-val http4sVersion = "0.16.0-cats-SNAPSHOT"
+val http4sVersion = "0.17.0-M3"
 lazy val webserver = Seq(
   "org.http4s" %% "http4s-blaze-server" % http4sVersion,
   "org.http4s" %% "http4s-dsl"          % http4sVersion,
